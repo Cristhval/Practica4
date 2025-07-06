@@ -33,17 +33,20 @@ public class LaberintoVista extends JPanel {
         }
     }
 
-    public static void mostrar(char[][] laberinto) {
+
+    public static LaberintoVista mostrar(char[][] laberinto) {
         JFrame frame = new JFrame("Laberinto Visual");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         LaberintoVista panel = new LaberintoVista(laberinto);
         JScrollPane scrollPane = new JScrollPane(panel);
-        scrollPane.setPreferredSize(new Dimension(800, 600));//Tamaño inicial visible
+        scrollPane.setPreferredSize(new Dimension(800, 600));
 
         frame.getContentPane().add(scrollPane);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+
+        return panel;
     }
 }

@@ -3,6 +3,7 @@ package org.unl.music.base.controller.data_struct.grafos;
 import org.unl.music.base.controller.data_struct.list.LinkedList;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Prim2 {
     char[][] maz;
@@ -12,7 +13,7 @@ public class Prim2 {
     }
 
     public String generar(int r, int c) {
-        // construir laberinto lleno de muros
+        //construir laberinto lleno de muros
         StringBuilder s = new StringBuilder(c);
         for (int x = 0; x < c; x++) {
             s.append('█');
@@ -22,11 +23,11 @@ public class Prim2 {
             maz[x] = s.toString().toCharArray();
         }
 
-        // seleccionar punto inicial (evitar bordes)
+        //seleccionar punto inicial para evitar bordes
         Point st = new Point(1 + (int) (Math.random() * (r - 2)), 1 + (int) (Math.random() * (c - 2)), null);
         maz[st.r][st.c] = 'S';
 
-        // vecinos directos del nodo inicial
+        //vecinos directos del nodo inicial
         ArrayList<Point> frontier = new ArrayList<Point>();
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
@@ -50,7 +51,7 @@ public class Prim2 {
             Point op = cu.opposite();
 
             try {
-                // evitar que op sea nulo o esté en el borde
+                //evitar que op sea nulo o este en el borde
                 if (op == null || op.r <= 0 || op.r >= r - 1 || op.c <= 0 || op.c >= c - 1) {
                     continue;
                 }
@@ -77,14 +78,14 @@ public class Prim2 {
                     }
                 }
             } catch (Exception e) {
-                // ignorar excepciones
+
             }
 
-            // cuando termina, marcar salida
+            //cuando termina marcar salida
             if (frontier.isEmpty() && last != null) {
                 maz[last.r][last.c] = 'E';
 
-                // --- NUEVO: abrir solo una salida, hacia el borde más cercano ---
+                // abrir solo una salida
                 int distArriba = last.r;
                 int distAbajo = r - 1 - last.r;
                 int distIzquierda = last.c;
@@ -113,7 +114,7 @@ public class Prim2 {
             }
         }
 
-        //Verificar que 'S' y 'E' existan; si no, regenerar el laberinto
+        //Verifica que 'S' y 'E' existan; si no estan se regenerar el laberinto
         boolean tieneS = false, tieneE = false;
         for (char[] fila : maz) {
             for (char ch : fila) {
@@ -163,27 +164,106 @@ public class Prim2 {
         }
     }
 
+    private static void imprimirLaberinto(char[][] matriz) {
+        for (char[] fila : matriz) {
+            for (char c : fila) {
+                System.out.print(c + " ");
+            }
+            System.out.println();
+        }
+        System.out.println("---------------------------");
+    }
+
+
+
+
     public static void main(String[] args) throws Exception {
-        int filas = 50, columnas = 30; // tamaño del laberinto
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Ingrese el numero de filas el minimo es de 30: ");
+        int filas = sc.nextInt();
+        System.out.print("Ingrese el numero de columnas el minimo es de 30: ");
+        int columnas = sc.nextInt();
+
+        if (filas < 30) filas = 30;
+        if (columnas < 30) columnas = 30;
+
+        System.out.println("Generando laberinto de " + filas + "x" + columnas);
 
         // 1. Generar laberinto
         Prim2 prim = new Prim2();
         prim.generar(filas, columnas);
         char[][] laberinto = prim.getMaz();
 
-        // 2. Construir grafo desde el laberinto
+        // 2. Buscar coordenadas de S y E
+        int filaS = -1, colS = -1, filaE = -1, colE = -1;
+        for (int i = 0; i < filas; i++) {
+            for (int j = 0; j < columnas; j++) {
+                if (laberinto[i][j] == 'S') {
+                    filaS = i;
+                    colS = j;
+                }
+                if (laberinto[i][j] == 'E') {
+                    filaE = i;
+                    colE = j;
+                }
+            }
+        }
+
+        if (filaS == -1 || filaE == -1) {
+            System.out.println("No se encontró punto de inicio o fin");
+            return;
+        }
+
+
         UndirectedGraph grafo = construirGrafo(laberinto);
 
-        // 3. Ejecutar Dijkstra
-        Dijkstra dijkstra = new Dijkstra();
-        LinkedList<int[]> recorrido = dijkstra.distancias(laberinto);
 
-        // 4. Mostrar paso a paso
-        dijkstra.mostrarPasoAPaso(recorrido, laberinto);
+        int idOrigen = filaS * columnas + colS;
+        int idDestino = filaE * columnas + colE;
+        Dijkstra dij = new Dijkstra();
+        LinkedList<Integer> camino = dij.dijkstra(grafo, idOrigen, idDestino);
 
-        // 5. Mostrar laberinto gráficamente en ventana
-        LaberintoVista.mostrar(laberinto);
+
+        for (int i = 0; i < camino.getLength(); i++) {
+            int id = camino.get(i);
+            int fila = id / columnas;
+            int col = id % columnas;
+            if (laberinto[fila][col] == ' ') {
+                laberinto[fila][col] = ' '; // marca camino con punto
+            }
+        }
+
+
+        for (int i = 0; i < camino.getLength(); i++) {
+            int id = camino.get(i);
+            int fila = id / columnas;
+            int col = id % columnas;
+            if (laberinto[fila][col] == '.') {
+                laberinto[fila][col] = '*';
+                imprimirLaberinto(laberinto);
+                Thread.sleep(50);
+            }
+        }
+
+        // Mostrar el laberinto y guardar el panel
+        LaberintoVista panel = LaberintoVista.mostrar(laberinto);
+
+
+        for (int i = 0; i < camino.getLength(); i++) {
+            int id = camino.get(i);
+            int fila = id / columnas;
+            int col = id % columnas;
+            if (laberinto[fila][col] == ' ') {
+                laberinto[fila][col] = '.';
+            }
+            panel.repaint(); //aqui se actualiza la vista para notar los cambios
+            Thread.sleep(100);
+        }
+
     }
+
 
     public static UndirectedGraph construirGrafo(char[][] laberinto) {
         int filas = laberinto.length;
@@ -194,7 +274,7 @@ public class Prim2 {
             for (int j = 0; j < columnas; j++) {
                 if (laberinto[i][j] != '█') {
                     int idActual = i * columnas + j;
-                    int[][] vecinos = {{0, 1}, {1, 0}};
+                    int[][] vecinos = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
                     for (int[] dir : vecinos) {
                         int ni = i + dir[0];
                         int nj = j + dir[1];
@@ -208,4 +288,6 @@ public class Prim2 {
         }
         return grafo;
     }
+
+
 }
