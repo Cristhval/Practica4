@@ -170,15 +170,20 @@ public class Prim2 {
 
         Scanner sc = new Scanner(System.in);
 
-        System.out.print("Ingrese el número de filas (mínimo 30): ");
+        System.out.print("Ingrese el numero de filas minimo 30: ");
         int filas = sc.nextInt();
-        System.out.print("Ingrese el número de columnas (mínimo 30): ");
+        System.out.print("Ingrese el numero de columnas minimo 30: ");
         int columnas = sc.nextInt();
 
-        if (filas < 30) filas = 30;
-        System.out.println("se procedera con 30 filas que es el minimo");
-        if (columnas < 30) columnas = 30;
-        System.out.println("se procedera con 30 columnas que es el minimo");
+        if (filas < 30) {
+            filas = 30;
+            System.out.println("Se procederz con 30 filas que es el minimo.");
+        }
+
+        if (columnas < 30) {
+            columnas = 30;
+            System.out.println("Se procedera con 30 columnas que es el minimo.");
+        }
 
         System.out.println("Generando laberinto de " + filas + "x" + columnas);
 
@@ -203,33 +208,48 @@ public class Prim2 {
         }
 
         if (filaS == -1 || filaE == -1) {
-            System.out.println("No se encontró punto de inicio o fin");
+            System.out.println("No se encontro punto de inicio o fin");
             return;
         }
 
-        //Construir grafo y encontrar el camino
+        // Construir grafo y ejecutar Dijkstra
         UndirectedGraph grafo = construirGrafo(laberinto);
         int idOrigen = filaS * columnas + colS;
         int idDestino = filaE * columnas + colE;
+
+        float[] distancias = new float[filas * columnas];
         Dijkstra dij = new Dijkstra();
-        LinkedList<Integer> camino = dij.dijkstra(grafo, idOrigen, idDestino);
+        LinkedList<Integer> camino = dij.dijkstra(grafo, idOrigen, idDestino, distancias);
 
+        if (camino.getLength() == 0) {
+            System.out.println("No hay camino entre S y E");
+            return;
+        }
 
+        //Imprimir el camino con pesos acumulados
+        System.out.println("\n Recorrido del camino mas corto (coordenadas y peso acumulado):");
+        for (int i = 0; i < camino.getLength(); i++) {
+            int id = camino.get(i);
+            int fila = id / columnas;
+            int col = id % columnas;
+            System.out.printf("(%d, %d) -> Peso acumulado: %.0f\n", fila, col, distancias[id]);
+        }
+
+        // 5. Mostrar la vista del laberinto
         LaberintoVista panel = LaberintoVista.mostrar(laberinto);
 
-        //Animar paso a paso en la misma vista
+        // 6. Animar recorrido en la vista
         for (int i = 0; i < camino.getLength(); i++) {
             int id = camino.get(i);
             int fila = id / columnas;
             int col = id % columnas;
             if (laberinto[fila][col] == ' ') {
-                laberinto[fila][col] = '.'; // camino
+                laberinto[fila][col] = '.'; // marcar camino
             }
             panel.repaint();
             Thread.sleep(200);
         }
     }
-
 
     public static UndirectedGraph construirGrafo(char[][] laberinto) {
         int filas = laberinto.length;
