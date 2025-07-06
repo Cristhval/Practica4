@@ -164,39 +164,30 @@ public class Prim2 {
         }
     }
 
-    private static void imprimirLaberinto(char[][] matriz) {
-        for (char[] fila : matriz) {
-            for (char c : fila) {
-                System.out.print(c + " ");
-            }
-            System.out.println();
-        }
-        System.out.println("---------------------------");
-    }
-
-
 
 
     public static void main(String[] args) throws Exception {
 
         Scanner sc = new Scanner(System.in);
 
-        System.out.print("Ingrese el numero de filas el minimo es de 30: ");
+        System.out.print("Ingrese el número de filas (mínimo 30): ");
         int filas = sc.nextInt();
-        System.out.print("Ingrese el numero de columnas el minimo es de 30: ");
+        System.out.print("Ingrese el número de columnas (mínimo 30): ");
         int columnas = sc.nextInt();
 
         if (filas < 30) filas = 30;
+        System.out.println("se procedera con 30 filas que es el minimo");
         if (columnas < 30) columnas = 30;
+        System.out.println("se procedera con 30 columnas que es el minimo");
 
         System.out.println("Generando laberinto de " + filas + "x" + columnas);
 
-        // 1. Generar laberinto
+        //Generar laberinto
         Prim2 prim = new Prim2();
         prim.generar(filas, columnas);
         char[][] laberinto = prim.getMaz();
 
-        // 2. Buscar coordenadas de S y E
+        //Buscar coordenadas de S y E
         int filaS = -1, colS = -1, filaE = -1, colE = -1;
         for (int i = 0; i < filas; i++) {
             for (int j = 0; j < columnas; j++) {
@@ -216,52 +207,27 @@ public class Prim2 {
             return;
         }
 
-
+        //Construir grafo y encontrar el camino
         UndirectedGraph grafo = construirGrafo(laberinto);
-
-
         int idOrigen = filaS * columnas + colS;
         int idDestino = filaE * columnas + colE;
         Dijkstra dij = new Dijkstra();
         LinkedList<Integer> camino = dij.dijkstra(grafo, idOrigen, idDestino);
 
 
-        for (int i = 0; i < camino.getLength(); i++) {
-            int id = camino.get(i);
-            int fila = id / columnas;
-            int col = id % columnas;
-            if (laberinto[fila][col] == ' ') {
-                laberinto[fila][col] = ' '; // marca camino con punto
-            }
-        }
-
-
-        for (int i = 0; i < camino.getLength(); i++) {
-            int id = camino.get(i);
-            int fila = id / columnas;
-            int col = id % columnas;
-            if (laberinto[fila][col] == '.') {
-                laberinto[fila][col] = '*';
-                imprimirLaberinto(laberinto);
-                Thread.sleep(50);
-            }
-        }
-
-        // Mostrar el laberinto y guardar el panel
         LaberintoVista panel = LaberintoVista.mostrar(laberinto);
 
-
+        //Animar paso a paso en la misma vista
         for (int i = 0; i < camino.getLength(); i++) {
             int id = camino.get(i);
             int fila = id / columnas;
             int col = id % columnas;
             if (laberinto[fila][col] == ' ') {
-                laberinto[fila][col] = '.';
+                laberinto[fila][col] = '.'; // camino
             }
-            panel.repaint(); //aqui se actualiza la vista para notar los cambios
-            Thread.sleep(100);
+            panel.repaint();
+            Thread.sleep(200);
         }
-
     }
 
 
