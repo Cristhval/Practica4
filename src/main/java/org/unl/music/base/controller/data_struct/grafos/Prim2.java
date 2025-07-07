@@ -6,28 +6,31 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Prim2 {
-    char[][] maz;
+    char[][] maz;//donde se guardan los datos del laberinto
 
     public char[][] getMaz() {
         return maz;
     }
 
-    public String generar(int r, int c) {
+    public void generar(int r, int c) {
         //construir laberinto lleno de muros
         StringBuilder s = new StringBuilder(c);
         for (int x = 0; x < c; x++) {
-            s.append('█');
+            s.append('0');
+
         }
+
         maz = new char[r][c];
         for (int x = 0; x < r; x++) {
             maz[x] = s.toString().toCharArray();
         }
 
+
         //seleccionar punto inicial para evitar bordes
         Point st = new Point(1 + (int) (Math.random() * (r - 2)), 1 + (int) (Math.random() * (c - 2)), null);
         maz[st.r][st.c] = 'S';
 
-        //vecinos directos del nodo inicial
+        //vecinos directos del nodo inicial"S"
         ArrayList<Point> frontier = new ArrayList<Point>();
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
@@ -56,7 +59,7 @@ public class Prim2 {
                     continue;
                 }
 
-                if (maz[cu.r][cu.c] == '█' && maz[op.r][op.c] == '█') {
+                if (maz[cu.r][cu.c] == '0' && maz[op.r][op.c] == '0') {
                     maz[cu.r][cu.c] = ' ';
                     maz[op.r][op.c] = ' ';
                     last = op;
@@ -110,7 +113,7 @@ public class Prim2 {
                         maz[last.r][j] = ' ';
                     }
                 }
-                // ---------------------------------------------------------------
+
             }
         }
 
@@ -124,21 +127,21 @@ public class Prim2 {
         }
         if (!tieneS || !tieneE) {
             System.out.println(" Regenerando laberinto por falta de 'S' o 'E'...");
-            return generar(r, c);
+            generar(r, c);
         }
 
         // construir cadena de texto del laberinto
-        s = new StringBuilder();
-        for (int i = 0; i < r; i++) {
-            String aux = "";
-            for (int j = 0; j < c; j++) {
-                aux += maz[i][j] + " ";
-            }
-            aux = aux.substring(0, aux.length() - 1);
-            s.append(aux).append("\n");
-        }
+//        s = new StringBuilder();
+//        for (int i = 0; i < r; i++) {
+//            String aux = "";
+//            for (int j = 0; j < c; j++) {
+//                aux += maz[i][j] + " ";
+//            }
+//            aux = aux.substring(0, aux.length() - 1);
+//            s.append(aux).append("\n");
+//        }
+//
 
-        return s.toString();
     }
 
     static class Point {
@@ -177,12 +180,12 @@ public class Prim2 {
 
         if (filas < 30) {
             filas = 30;
-            System.out.println("Se procederz con 30 filas que es el minimo.");
+            System.out.println("Se procederz con 30 filas que es el minimo");
         }
 
         if (columnas < 30) {
             columnas = 30;
-            System.out.println("Se procedera con 30 columnas que es el minimo.");
+            System.out.println("Se procedera con 30 columnas que es el minimo");
         }
 
         System.out.println("Generando laberinto de " + filas + "x" + columnas);
@@ -235,10 +238,10 @@ public class Prim2 {
             System.out.printf("(%d, %d) -> Peso acumulado: %.0f\n", fila, col, distancias[id]);
         }
 
-        // 5. Mostrar la vista del laberinto
+        //Mostrar la vista del laberinto
         LaberintoVista panel = LaberintoVista.mostrar(laberinto);
 
-        // 6. Animar recorrido en la vista
+        //Animar recorrido en la vista //camino = dijsktra
         for (int i = 0; i < camino.getLength(); i++) {
             int id = camino.get(i);
             int fila = id / columnas;
@@ -258,13 +261,13 @@ public class Prim2 {
 
         for (int i = 0; i < filas; i++) {
             for (int j = 0; j < columnas; j++) {
-                if (laberinto[i][j] != '█') {
+                if (laberinto[i][j] != '0') {
                     int idActual = i * columnas + j;
                     int[][] vecinos = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
                     for (int[] dir : vecinos) {
                         int ni = i + dir[0];
                         int nj = j + dir[1];
-                        if (ni >= 0 && ni < filas && nj >= 0 && nj < columnas && laberinto[ni][nj] != '█') {
+                        if (ni >= 0 && ni < filas && nj >= 0 && nj < columnas && laberinto[ni][nj] != '0') {
                             int idVecino = ni * columnas + nj;
                             grafo.insert(idActual, idVecino, 1f);
                         }

@@ -8,7 +8,7 @@ public class UndirectedGraph extends DirectedGraph{
 
     @Override
     public void insert(Integer o, Integer d, Float weigth) {
-        if (o.intValue() <= nro_vertex().intValue()&&d.intValue()<= nro_vertex().intValue()){
+        if (o.intValue() <= nro_vertex().intValue() && d.intValue()<= nro_vertex().intValue()){
             if (exists_Edge(o,d) == null){
                 setNro_vertex(nro_edge()+1);
                 //origen

@@ -20,7 +20,7 @@ public class LaberintoVista extends JPanel {
             for (int j = 0; j < laberinto[0].length; j++) {
                 char c = laberinto[i][j];
                 switch (c) {
-                    case '█' -> g.setColor(Color.BLACK);// muro
+                    case '0' -> g.setColor(Color.BLACK);// muro
                     case 'S' -> g.setColor(Color.GREEN);// inicio
                     case 'E' -> g.setColor(Color.RED);// fin
                     case '.' -> g.setColor(Color.CYAN);// camino

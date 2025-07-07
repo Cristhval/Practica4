@@ -40,12 +40,12 @@ public class Dijkstra {
         LinkedList<Integer> camino = new LinkedList<>();
         int actual = destino;
         while (actual != -1) {
-            camino.add(actual, 0); // insertar al inicio
+            camino.add(actual, 0);//insertar al inicio
             actual = padre[actual];
         }
 
         if (camino.getLength() == 0 || !camino.get(0).equals(origen)) {
-            return new LinkedList<>(); // no hay camino
+            return new LinkedList<>();// no hay camino
         }
 
         return camino;
