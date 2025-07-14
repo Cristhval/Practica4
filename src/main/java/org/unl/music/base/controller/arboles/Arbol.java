@@ -1,15 +1,15 @@
 package org.unl.music.base.controller.arboles;
 
-public class Arbol {
-    NodoArbol inicial;
+public class Arbol<E extends Comparable<E>> {
+    NodoArbol<E> inicial;
 
     public Arbol() {
         this.inicial = null;
     }
 
-    public void insertar(int valor) {
+    public void insertar(E valor) {
         if (inicial == null) {
-            this.inicial = new NodoArbol(valor);
+            this.inicial = new NodoArbol<>(valor);
         }else  {
             this.inicial.insertar(valor);
         }
@@ -18,7 +18,7 @@ public class Arbol {
     public void dispararPreorden() {
         this.preorden(this.inicial);
     }
-    public void preorden(NodoArbol nodo) {
+    public void preorden(NodoArbol<E> nodo) {
         if (nodo == null) {
             return;
         }else{
@@ -33,7 +33,7 @@ public class Arbol {
     public void dispararInorden() {
         this.inorden(this.inicial);
     }
-    public void inorden(NodoArbol nodo) {
+    public void inorden(NodoArbol<E> nodo) {
         if (nodo == null) {
             return;
         }else{
@@ -47,7 +47,7 @@ public class Arbol {
     public void dispararPostorden() {
         this.postOrden(this.inicial);
     }
-    public void postOrden(NodoArbol nodo) {
+    public void postOrden(NodoArbol<E> nodo) {
         if (nodo == null) {
             return;
         }else{
@@ -62,7 +62,7 @@ public class Arbol {
         imprimirArbol(this.inicial, 0);
     }
 
-    private void imprimirArbol(NodoArbol nodo, int nivel) {
+    private void imprimirArbol(NodoArbol<E> nodo, int nivel) {
         if (nodo == null) {
             return;
         }

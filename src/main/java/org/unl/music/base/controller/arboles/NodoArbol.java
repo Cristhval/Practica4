@@ -2,47 +2,54 @@ package org.unl.music.base.controller.arboles;
 
 
 
-public class NodoArbol {
-    private int valor;
-    private NodoArbol nodoIzquierdo;
-    private NodoArbol nodoDerecho;
+public class NodoArbol<E extends Comparable<E>>  {
+    private E valor;
+    private NodoArbol<E> nodoIzquierdo;
+    private NodoArbol<E> nodoDerecho;
 
-    public NodoArbol(int valor) {
+    public NodoArbol(E valor) {
         this.valor = valor;
         this.nodoIzquierdo = null;
         this.nodoDerecho = null;
     }
 
-    public int getValor() {
+    public E getValor() {
         return valor;
     }
-    public void setValor(int valor) {
+    public void setValor(E valor) {
         this.valor = valor;
     }
 
-    public NodoArbol getNodoIzquierdo() {
+    public NodoArbol<E> getNodoIzquierdo() {
         return nodoIzquierdo;
     }
 
-    public NodoArbol getNodoDerecho() {
+    public NodoArbol<E> getNodoDerecho() {
         return nodoDerecho;
     }
 
-    public void insertar(int valor1) {
-        if (valor1 < this.valor) {
+    public void insertar(E valor1) {
+
+        char primerChar = valor1.toString().toLowerCase().charAt(0);
+
+        System.out.println(valor1);
+        System.out.println(this.valor);
+        if (valor1.compareTo(this.valor)<0) {
             //PAra insetar en el lado izquierdo
             if (this.nodoIzquierdo == null) {
-                this.nodoIzquierdo = new NodoArbol(valor1);
+                this.nodoIzquierdo = new NodoArbol<>(valor1);
             }else  {
                 this.nodoIzquierdo.insertar(valor1);
             }
+
         }else{
             //PARA insertar en el lado derecho
             if (this.nodoDerecho == null) {
-                this.nodoDerecho = new NodoArbol(valor1);
+                this.nodoDerecho = new NodoArbol<>(valor1);
             }else   {
                 this.nodoDerecho.insertar(valor1);
             }
         }
+
     }
 }
